@@ -36,10 +36,12 @@ def analyze(cls):
         if j == len(class_genes[0]):
             break
 
-    plt.scatter(np.arange(0, len(all_genes)), np.transpose(all_genes))
+    plt.scatter(np.arange(0, len(all_genes)), np.transpose(all_genes), label="class={}".format(cls))
 
 for cls in unique_classes:
     analyze(cls)
 
+plt.legend()
+plt.xticks(range(len(unique_genes)), unique_genes, rotation=90)
 plt.show()
 
