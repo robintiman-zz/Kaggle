@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Read file using pandas
-train_variants = pd.read_csv("training_variants")
+train_variants = pd.read_csv("data/training_variants")
 
 # Fetch the column values
 ids = train_variants.ID.values
@@ -13,36 +13,33 @@ classes = train_variants.Class.values
 
 unique_genes = np.unique(genes)
 unique_variations = np.unique(variations)
-print(unique_genes,"\n\n",unique_variations)
+unique_classes = np.unique(classes)
 
 """
 Finds all the genes and variations for a given class and counts the 
 number of occurrences. 
 """
 def analyze(cls):
+    # Find the instances where class is set to the given cls
     indices = np.where(classes == cls)[0]
-    class_genes = genes[indices]
-    class_variations = variations[indices]
-    unique_class_genes = np.unique(class_genes, return_counts=True)
-    unique_class_variations = np.unique(class_variations, return_counts=True)
-    return unique_class_genes, unique_class_variations
 
-"""
-Visualizes it in scatter plot with the number of occurrences for a given class as 
-the y value. The indices as x values.  
-"""
-def vizualise(cls):
-    gene_count, variations_count = analyze(cls)
-    plt.title("class=1")
-    x_genes = np.arange(0, len(gene_count[1]))
-    x_variations = np.arange(0, len(unique_variations))
-    plt.scatter(x_genes, gene_count[1])
+    # Count the number of occurrences of each gene for this class.
+    class_genes = np.unique(genes[indices], return_counts=True)
 
-vizualise(1)
-vizualise(2)
-vizualise(3)
-vizualise(4)
-vizualise(5)
+    all_genes = np.zeros((len(unique_genes), 1))
+
+    j = 0
+    for i in range(len(unique_genes)):
+        if unique_genes[i] == class_genes[0][j]:
+            all_genes[i] = class_genes[1][j]
+            j += 1
+        if j == len(class_genes[0]):
+            break
+
+    plt.scatter(np.arange(0, len(all_genes)), np.transpose(all_genes))
+
+for cls in unique_classes:
+    analyze(cls)
 
 plt.show()
 
